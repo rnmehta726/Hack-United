@@ -5,7 +5,9 @@ import {
     signup,
     login,
     chatai,
-    addAudioFile
+    addVoice,
+    logout,
+    resetPassword,
 } from "./apiController.js";
 import dotenv from "dotenv";
 
@@ -25,12 +27,14 @@ app.use(
 app.use(json());
 app.use(urlencoded({ extended: false }));
 
-app.post("/chatai", upload.single("audioFile"), chatai);
+app.post("/chatai", upload.single("msgFile"), chatai);
 app.post("/signup", signup);
 app.post("/login", login);
-app.post("/addaudiofile", upload.single("calibrationFile"), addAudioFile);
+app.post("/logout", logout)
+app.post("/addVoice", addVoice);
+app.post("/resetPassword", resetPassword)
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4000;
 app.listen(port, () => {
     console.log(`Server started on Port ${port}`)
 })

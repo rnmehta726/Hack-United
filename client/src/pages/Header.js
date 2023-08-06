@@ -5,11 +5,28 @@ import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: `http://localhost:4000/`
+});
 
 const pages = ['Record', 'Conversation'];
 
 export default function Header() {
     const navigate = useNavigate();
+
+    async function logOut() {
+      try{
+        await api.post("/logout", {}).then((response) => {
+          console.log(response);
+          navigate("/");
+        });
+      } catch (err) {
+        console.log(err);
+        alert("Unable to log out");
+      }
+    }
 
     return (
         <AppBar position="static">
@@ -26,6 +43,7 @@ export default function Header() {
                         {page}
                     </Button>
                 ))}
+                <Button onClick={logOut} sx={{ my: 2, color: 'white', display: 'block'}}>Log Out</Button>
             </Box>
           </Toolbar>
         </Container>

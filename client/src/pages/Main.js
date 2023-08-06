@@ -3,8 +3,11 @@ import Sheet from "@mui/joy/Sheet";
 import Button from "@mui/joy/Button";
 import Grid from "@mui/joy/Grid";
 import Typography from '@mui/joy/Typography';
+import { useNavigate } from 'react-router-dom';
 
 export default function Main() {
+    const navigate = useNavigate();
+
     return <Sheet sx={{
         width: 500,
         mx: 'auto', // margin left & right
@@ -23,13 +26,13 @@ export default function Main() {
         <Grid container spacing={5} columns={10} sx={{ flexGrow: 1 }} >
             <Grid xs={2}></Grid>
             <Grid xs={'auto'}>
-                <Button href='/record'>Record</Button>
+                <Button onClick={navigate("/record")}>Record</Button>
             </Grid>
             <Grid xs={'auto'}>
                 <Typography>|</Typography>
             </Grid>
             <Grid xs={'auto'}>
-                <Button href="/conversation">Conversation</Button>
+                <Button onClick={navigate("/conversation")}>Conversation</Button>
             </Grid>
             <Grid xs={2}></Grid>
         </Grid>

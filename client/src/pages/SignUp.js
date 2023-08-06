@@ -28,9 +28,10 @@ export default function SignUp() {
       try {
           await api.post("/signup", {
             email: email,
-            password: password
+            password: password,
+            name: name
           }).then((response) => {
-            console.log(response);
+            console.log("");
             navigate("/home");
           });
       } catch (err) {

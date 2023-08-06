@@ -5,9 +5,10 @@ import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/joy/Grid";
+import axios from "axios";
 
 export default function Conversation() {
-    const mimeType = "audio/webm";
+    const mimeType = "audio/mp3";
     const [permission, setPermission] = useState(false);
     const [stream, setStream] = useState(null);
     const [recording, setRecording] = useState(false);
@@ -15,6 +16,7 @@ export default function Conversation() {
     const [audioChunks, setAudioChunks] = useState([]);
     //const [audio, setAudio] = useState(null);
     const [messages, setMessages] = useState([]);
+    var bodyFormData = new FormData();
 
     const getMicrophonePermission = async () => {
         if ("MediaRecorder" in window) {
@@ -54,16 +56,22 @@ export default function Conversation() {
         setRecording(false);
         //stops the recording instance
         mediaRecorder.current.stop();
-        mediaRecorder.current.onstop = () => {
-          //creates a blob file from the audiochunks data
-           const audioBlob = new Blob(audioChunks, { type: mimeType });
-          //creates a playable URL from the blob file.
-           const audioUrl = URL.createObjectURL(audioBlob);
-           //setAudio(audioUrl);
-           setAudioChunks([]);
-           
-           const newMessages = [...messages, audioUrl]
-           setMessages(newMessages);
+        mediaRecorder.current.onstop = async () => {
+            //creates a blob file from the audiochunks data
+            const audioBlob = new Blob(audioChunks, { type: mimeType });
+            //creates a playable URL from the blob file.
+            const audioUrl = URL.createObjectURL(audioBlob);
+            //setAudio(audioUrl);
+            setAudioChunks([]);
+            
+            const newMessages = [...messages, audioUrl]
+            setMessages(newMessages);
+
+            bodyFormData.append("msgFile", audioUrl)
+            await axios.post("http://localhost:4000/chatai", bodyFormData)
+                .then((res) => {
+                    console.log(res);
+                })
         };
 
     };
@@ -118,6 +126,9 @@ export default function Conversation() {
                 {messages.map((audio) => {
                     return <Grid container justify="flex-end" direction="row-reverse">
                         <audio src={audio} controls></audio>
+                        <a download href={audio}>
+                            Download Recording
+                        </a>
                     </Grid>
                 })}
                 {/* {audio ? (

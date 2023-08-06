@@ -5,18 +5,52 @@ import React, {useState} from 'react';
 import Input from '@mui/joy/Input';
 import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { ELEVENLABS_API_KEY } from '../keys';
 
 export default function Record() {
 	const [selectedFile, setSelectedFile] = useState();
 	const [isFilePicked, setIsFilePicked] = useState(false);
+    const [name, setName] = useState();
+    const api = axios.create({
+        baseURL: `http://localhost:4000/`
+    });
+    const navigate = useNavigate();
 
     const changeHandler = (event) => {
 		setSelectedFile(event.target.files[0]);
 		setIsFilePicked(true);
 	};
 
-    const handleSubmit = () => {
-
+    async function handleSubmit() {
+        const options = {
+            method: 'POST',
+            url: `https://api.elevenlabs.io/v1/voices/add`,
+            headers: {
+                'content-type': 'multipart/form-data', // Set the content type to application/json.
+                'xi-api-key': `${ELEVENLABS_API_KEY}`, // Set the API key in the headers.
+            },
+            data: {
+                name: name, // Pass in the inputText as the text to be converted to speech.
+                files:[selectedFile]
+            },
+            responseType: 'application/json',
+        }
+        try {
+            await axios.request(options).then((response) => {
+                api.post("/addVoice", {
+                    voice_id: JSON.parse(response.data).voice_id
+                }).then((response) => {
+                    console.log(response);
+                    navigate("/home");
+                });
+            });
+        } catch (err) {
+            console.log(err);
+            alert("Unable to add voice");
+        }
+        
     };
 
     return <Sheet sx={{
@@ -39,6 +73,7 @@ export default function Record() {
                     name="name"
                     type="name"
                     placeholder="John Doe"
+                    onChange={(e) => setName(e.target.value)}
                 />
             </FormControl>
             <FormControl>
