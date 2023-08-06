@@ -4,7 +4,9 @@ import {
     signUpAuth,
     loginAuth,
     chatai2,
-    addCalibrationFile
+    addVoice2,
+    logoutAuth,
+    resetPasswordAuth
 } from "./externalRequests.js"
 
 dotenv.config();
@@ -14,7 +16,8 @@ export const signup = asyncHandler(async (req, res) => {
         res.send(
             await signUpAuth(
                 req.body.email,
-                req.body.password
+                req.body.password,
+                req.body.name
             )
         );
     } catch (err) {
@@ -47,13 +50,29 @@ export const chatai = asyncHandler(async (req, res) => {
     }
 });
 
-export const addAudioFile = asyncHandler(async (req, res) => {
+export const addVoice = asyncHandler(async (req, res) => {
     try {
         res.send( 
-            await addCalibrationFile(
-                req.file
+            await addVoice2(
+                req.body.voice_id
             )
         )
+    } catch (err) {
+        res.json(err);
+    }
+})
+
+export const logout = asyncHandler(async (req, res) => {
+    try {
+        res.send(await logoutAuth());
+    } catch (err) {
+        res.json(err);
+    }
+})
+
+export const resetPassword = asyncHandler(async (req, res) => {
+    try {
+        res.send(await resetPasswordAuth());
     } catch (err) {
         res.json(err);
     }
